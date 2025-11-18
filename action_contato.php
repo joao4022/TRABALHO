@@ -26,20 +26,25 @@
         <h1>Dados Recebidos</h1>
         <div class="contato-form">
             <?php
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                echo "<p><strong>Nome:</strong> " . htmlspecialchars($_POST["nome"]) . "</p>";
-                echo "<p><strong>Email:</strong> " . htmlspecialchars($_POST["email"]) . "</p>";
+            if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST)) {
 
-                if (!empty($_POST["mensagem"])) {
-                    echo "<p><strong>Mensagem:</strong> " . nl2br(htmlspecialchars($_POST["mensagem"])) . "</p>";
-                }
+                // Campos principais
+                $nome = htmlspecialchars($_POST["nome"] ?? "");
+                $email = htmlspecialchars($_POST["email"] ?? "");
+                $mensagem = htmlspecialchars($_POST["mensagem"] ?? "");
 
-                // Exibe os outros campos que o aluno adicionar
+                if ($nome) echo "<p><strong>Nome:</strong> $nome</p>";
+                if ($email) echo "<p><strong>Email:</strong> $email</p>";
+                if ($mensagem) echo "<p><strong>Mensagem:</strong> " . nl2br($mensagem) . "</p>";
+
+                // Exibir outros campos automaticamente
                 foreach ($_POST as $campo => $valor) {
-                    if (!in_array($campo, ["nome", "email", "mensagem"])) {
-                        echo "<p><strong>" . ucfirst($campo) . ":</strong> " . htmlspecialchars($valor) . "</p>";
+                    if (!in_array($campo, ["nome", "email", "mensagem"]) && trim($valor) !== "") {
+                        $campoFormatado = ucwords(str_replace("_", " ", $campo));
+                        echo "<p><strong>$campoFormatado:</strong> " . htmlspecialchars($valor) . "</p>";
                     }
                 }
+
             } else {
                 echo "<p>Nenhum dado foi enviado.</p>";
             }
@@ -47,7 +52,6 @@
         </div>
     </main>
 
-    <!-- Rodapé -->
     <footer>
         <p>&copy; 2025 Locadora IFPR - Todos os direitos reservados</p>
     </footer>
