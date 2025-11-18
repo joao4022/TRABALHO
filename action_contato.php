@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Locadora IFPR - Resultado do Formulário</title>
+    <title>Locadora IFPR - Contato</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -15,46 +15,64 @@
         <h2>Locadora IFPR</h2>
         <nav>
             <a href="index.html">Início</a>
-            <a href="carros.html">Carros</a>
             <a href="filiais.html">Filiais</a>
-            <a href="contato.html">Contato</a>
+            <a href="contato.html" aria-current="page">Contato</a>
+            <a href="planilha.html">Planilha</a>
         </nav>
     </header>
 
     <!-- Conteúdo principal -->
     <main>
-        <h1>Dados Recebidos</h1>
-        <div class="contato-form">
-            <?php
-            if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST)) {
+        <h1>Entre em Contato</h1>
+        <form class="contato-form" id="form-contato">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
 
-                $nome = htmlspecialchars($_POST["nome"] ?? "");
-                $email = htmlspecialchars($_POST["email"] ?? "");
-                $mensagem = htmlspecialchars($_POST["mensagem"] ?? "");
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
 
-                if ($nome) echo "<p><strong>Nome:</strong> $nome</p>";
-                if ($email) echo "<p><strong>Email:</strong> $email</p>";
-                if ($mensagem) echo "<p><strong>Mensagem:</strong> " . nl2br($mensagem) . "</p>";
+            <label for="mensagem">Mensagem:</label>
+            <textarea id="mensagem" name="mensagem" rows="5" placeholder="Escreva sua mensagem"></textarea>
 
-                // Exibe dinamicamente outros campos do formulário
-                foreach ($_POST as $campo => $valor) {
-                    if (!in_array($campo, ["nome", "email", "mensagem"]) && trim($valor) !== "") {
-                        $campoFormatado = ucwords(str_replace("_", " ", $campo));
-                        echo "<p><strong>$campoFormatado:</strong> " . htmlspecialchars($valor) . "</p>";
-                    }
-                }
+            <button type="submit">Enviar</button>
+        </form>
 
-            } else {
-                echo "<p>Nenhum dado foi enviado.</p>";
-            }
-            ?>
-        </div>
+        <div id="resposta" class="info-msg"></div>
     </main>
 
+    <!-- Rodapé -->
     <footer>
         <p>&copy; 2025 Locadora IFPR - Todos os direitos reservados</p>
     </footer>
 
-</body>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8-UzNmWk6_t1wKGOySCfTmaGgMD8H9DDzIxIZslXKIY28T26SGa2rRRWbPHf_YiL7/exec";
 
+        const form = document.getElementById("form-contato");
+        const resposta = document.getElementById("resposta");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (res.ok) {
+                    resposta.textContent = "Dados enviados com sucesso!";
+                    form.reset();
+                } else {
+                    resposta.textContent = "Erro ao enviar os dados.";
+                }
+            } catch (err) {
+                resposta.textContent = "Erro ao enviar: " + err.message;
+            }
+        });
+    </script>
+
+</body>
 </html>
