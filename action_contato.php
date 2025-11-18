@@ -28,7 +28,6 @@
             <?php
             if ($_SERVER["REQUEST_METHOD"] === "POST" && !empty($_POST)) {
 
-                // Campos principais
                 $nome = htmlspecialchars($_POST["nome"] ?? "");
                 $email = htmlspecialchars($_POST["email"] ?? "");
                 $mensagem = htmlspecialchars($_POST["mensagem"] ?? "");
@@ -37,7 +36,7 @@
                 if ($email) echo "<p><strong>Email:</strong> $email</p>";
                 if ($mensagem) echo "<p><strong>Mensagem:</strong> " . nl2br($mensagem) . "</p>";
 
-                // Exibir outros campos automaticamente
+                // Exibe dinamicamente outros campos do formulário
                 foreach ($_POST as $campo => $valor) {
                     if (!in_array($campo, ["nome", "email", "mensagem"]) && trim($valor) !== "") {
                         $campoFormatado = ucwords(str_replace("_", " ", $campo));
