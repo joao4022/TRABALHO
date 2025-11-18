@@ -9,6 +9,7 @@
 </head>
 
 <body>
+
     <header>
         <h2>Locadora IFPR</h2>
         <nav>
@@ -21,7 +22,7 @@
 
     <main>
         <h1>Registros do Formulário</h1>
-        <div id="mensagem" class="info-msg">Carregando...</div>
+        <div id="mensagem" class="info-msg">Carregando registros...</div>
         <div class="table-wrap" id="table-wrap"></div>
     </main>
 
@@ -30,56 +31,76 @@
     </footer>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec"; // substitua pela sua URL
+        // ⚠️ Substitua pelo ID real
+        const SCRIPT_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec";
 
         async function carregar() {
-            const msg = document.getElementById('mensagem');
-            const wrap = document.getElementById('table-wrap');
-            msg.textContent = 'Carregando dados...';
-            wrap.innerHTML = '';
+            const msg = document.getElementById("mensagem");
+            const wrap = document.getElementById("table-wrap");
+
+            msg.textContent = "Carregando registros...";
+            wrap.innerHTML = "";
 
             try {
                 const res = await fetch(SCRIPT_URL);
-                const dados = await res.json();
 
-                if (!dados.length) {
-                    msg.textContent = 'Nenhum registro encontrado.';
+                // Verificação extra para serviços que não retornam JSON válido
+                const texto = await res.text();
+                let dados;
+
+                try {
+                    dados = JSON.parse(texto);
+                } catch (e) {
+                    msg.textContent = "Erro: o servidor não retornou JSON válido.";
+                    console.error("Resposta recebida:", texto);
                     return;
                 }
 
-                msg.textContent = '';
-                const table = document.createElement('table');
-                table.className = 'dados-planilha';
+                if (!Array.isArray(dados) || dados.length === 0) {
+                    msg.textContent = "Nenhum registro encontrado.";
+                    return;
+                }
 
-                const thead = document.createElement('thead');
-                const trh = document.createElement('tr');
-                Object.keys(dados[0]).forEach(h => {
-                    const th = document.createElement('th');
-                    th.textContent = h;
+                msg.textContent = "";
+                
+                // Criação da tabela
+                const table = document.createElement("table");
+                table.className = "dados-planilha";
+
+                // Cabeçalho
+                const thead = document.createElement("thead");
+                const trh = document.createElement("tr");
+                Object.keys(dados[0]).forEach(campo => {
+                    const th = document.createElement("th");
+                    th.textContent = campo;
                     trh.appendChild(th);
                 });
                 thead.appendChild(trh);
                 table.appendChild(thead);
 
-                const tbody = document.createElement('tbody');
-                dados.forEach(obj => {
-                    const tr = document.createElement('tr');
-                    Object.values(obj).forEach(v => {
-                        const td = document.createElement('td');
-                        td.textContent = v;
+                // Corpo da tabela
+                const tbody = document.createElement("tbody");
+                dados.forEach(linha => {
+                    const tr = document.createElement("tr");
+                    Object.values(linha).forEach(valor => {
+                        const td = document.createElement("td");
+                        td.textContent = valor;
                         tr.appendChild(td);
                     });
                     tbody.appendChild(tr);
                 });
                 table.appendChild(tbody);
+
                 wrap.appendChild(table);
+
             } catch (err) {
-                msg.textContent = 'Erro ao carregar: ' + err.message;
+                msg.textContent = "Erro ao carregar: " + err.message;
             }
         }
 
         carregar();
     </script>
+
 </body>
 
 </html>
