@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    
-<header>
-  <h2>Locadora IFPR</h2>
-  <nav>
-    <a href="index.html">Início</a>
-    <a href="filiais.html">Filiais</a>
-    <a href="contato.html">Contato</a>
-    <a href="planilha.html">Planilha</a>
-  </nav>
 
-  <div id="tema-toggle" class="tema-toggle">
-    <div class="bolinha"></div>
-  </div>
-</header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locadora IFPR - Início</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
 <body>
 
     <!-- Cabeçalho -->
@@ -25,64 +19,72 @@
             <a href="contato.html">Contato</a>
             <a href="planilha.html">Planilha</a>
         </nav>
+
+        <!-- Botão de tema -->
+        <div id="tema-toggle" class="tema-toggle">
+            <div class="bolinha"></div>
+        </div>
     </header>
 
+    <!-- Conteúdo principal -->
     <main>
         <h1>Bem-vindo à Locadora de Veículos</h1>
         <p>Encontre o carro ideal para sua viagem, trabalho ou lazer.</p>
-      
+
         <div id="conteudo" class="conteudo-scroll">
-          <p>Carregando conteúdo...</p>
+            <p>Carregando conteúdo...</p>
         </div>
-      </main>
-      
-      <script>
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKRgyC5MtrxTGLVpRAsVx2eVidt0kF-1yDMjpmNgxltBuj6uR5Ow12wAaSlaKPBmRx/exec"; // substitua pela URL do seu Apps Script
-      
-      async function carregarConteudo() {
-        const container = document.getElementById('conteudo');
-        container.innerHTML = "<p>Carregando conteúdo...</p>";
-      
-        try {
-          const res = await fetch(SCRIPT_URL);
-          const dados = await res.json();
-          container.innerHTML = '';
-      
-          dados.forEach(item => {
-            const bloco = document.createElement('div');
-            bloco.className = 'bloco-item';
-      
-            const titulo = document.createElement('h2');
-            titulo.textContent = item.Titulo || '';
-            bloco.appendChild(titulo);
-      
-            const descricao = document.createElement('p');
-            descricao.textContent = item.Descricao || '';
-            bloco.appendChild(descricao);
-      
-            if (item.Url && item.Url.startsWith('http')) {
-              if (item.Url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || item.Url.includes('unsplash')) {
-                const img = document.createElement('img');
-                img.src = item.Url;
-                img.alt = item.Titulo || 'Imagem';
-                bloco.appendChild(img);
-              } else {
-                const link = document.createElement('a');
-                link.href = item.Url;
-                link.textContent = 'Ver mais';
-                bloco.appendChild(link);
-              }
+    </main>
+
+    <!-- Script de carregamento dinâmico -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKRgyC5MtrxTGLVpRAsVx2eVidt0kF-1yDMjpmNgxltBuj6uR5Ow12wAaSlaKPBmRx/exec";
+
+        async function carregarConteudo() {
+            const container = document.getElementById('conteudo');
+            container.innerHTML = "<p>Carregando conteúdo...</p>";
+
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const dados = await res.json();
+                container.innerHTML = "";
+
+                dados.forEach(item => {
+                    const bloco = document.createElement("div");
+                    bloco.className = "bloco-item";
+
+                    const titulo = document.createElement("h2");
+                    titulo.textContent = item.Titulo || "";
+                    bloco.appendChild(titulo);
+
+                    const descricao = document.createElement("p");
+                    descricao.textContent = item.Descricao || "";
+                    bloco.appendChild(descricao);
+
+                    // Verifica tipo do URL
+                    if (item.Url && item.Url.startsWith("http")) {
+                        if (item.Url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || item.Url.includes("unsplash")) {
+                            const img = document.createElement("img");
+                            img.src = item.Url;
+                            img.alt = item.Titulo || "Imagem";
+                            bloco.appendChild(img);
+                        } else {
+                            const link = document.createElement("a");
+                            link.href = item.Url;
+                            link.textContent = "Ver mais";
+                            bloco.appendChild(link);
+                        }
+                    }
+
+                    container.appendChild(bloco);
+                });
+            } catch (err) {
+                container.innerHTML = "<p>Erro ao carregar dados: " + err.message + "</p>";
             }
-      
-            container.appendChild(bloco);
-          });
-        } catch (err) {
-          container.innerHTML = "<p>Erro ao carregar dados: " + err.message + "</p>";
         }
-      }
-      
-      carregarConteudo();
-      </script>
+
+        carregarConteudo();
+    </script>
 
     <!-- Rodapé -->
     <footer>
